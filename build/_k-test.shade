@@ -52,9 +52,9 @@ projectFile=''
 
             if (!framework.StartsWith("dnxcore", StringComparison.OrdinalIgnoreCase))
             {
-                K(("test" + testArgs), projectFolder, "");
+                K(("test" + testArgs), projectFolder, "default -runtime CLR");
             }
-            else if (!IsMono)
+            else
             {
                 K(("test" + testArgs), projectFolder, "default -runtime CoreCLR");
             }
