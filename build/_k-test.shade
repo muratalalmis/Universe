@@ -42,13 +42,21 @@ projectFile=''
                 {
                     { "dnx451", new Dictionary<string, object>() } // Assume dnx451 only if none specified
                 };
-        
+
+        var skipFrameworks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var skipFrameworkString = E("SKIP_DNX_TEST");
+        if (!string.IsNullOrEmpty(skipFrameworkString))
+        {
+            skipFrameworks.UnionWith(skipFrameworkString.Split((char)','));
+        }
+
         // Currently only dnx* targets are supported. See aspnet/Universe#53
-        var targetFrameworks = configs.Keys.Where(k => k.StartsWith("dnx", StringComparison.OrdinalIgnoreCase));
+        var targetFrameworks = configs.Keys.Where(
+            key => key.StartsWith("dnx", StringComparison.OrdinalIgnoreCase) && !skipFrameworks.Contains(key));
 
         foreach (var framework in targetFrameworks)
         {
-            var testArgs = (IsMono || noParallelTestProjects.Contains(projectName)) ? " -parallel none" : "";
+            var testArgs = (IsMono || noParallelTestProjects.Contains(projectName)) ? " -parallel none" : string.Empty;
 
             if (!framework.StartsWith("dnxcore", StringComparison.OrdinalIgnoreCase))
             {
